@@ -149,3 +149,26 @@ resource "azurerm_virtual_machine" "test-vm" {
         environment = "Terraform Demo"
     }
 }
+
+resource "azurerm_virtual_machine_extension" "test-machine-extension" {
+    name                 = "test-vm"
+    location             = "${azurerm_resource_group.test-group.location}"
+    resource_group_name  = "${azurerm_resource_group.test-group.name}"
+    virtual_machine_name = "${azurerm_virtual_machine.test-vm.name}"
+    publisher            = "Microsoft.Azure.Extensions"
+    type                 = "CustomScript"
+    type_handler_version = "2.0"
+    depends_on           = ["azurerm_virtual_machine.test-vm"]
+
+
+    settings = <<SETTINGS
+        {
+            "fileUris": ["https://raw.githubusercontent.com/david-dusnoki/tf-multicloud/master/init.sh"],
+            "commandToExecute": "bash init.sh"
+        }
+    SETTINGS
+
+    tags {
+        environment = "Test"
+    }
+}
