@@ -9,3 +9,4 @@ variable azure_username {}
 # Digital Ocean
 variable do_token {}
 variable do_ssh_key {}
+variable do_private_key {}

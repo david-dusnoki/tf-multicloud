@@ -11,4 +11,20 @@ resource "digitalocean_droplet" "do-test-droplet" {
     region = "sgp1"
     size   = "1gb"
     ssh_keys = ["${digitalocean_ssh_key.do_ssh_key.fingerprint}"]
+
+    connection {
+        user = "root"
+        type = "ssh"
+        private_key = "${file(var.do_private_key)}"
+        timeout = "2m"
+    }
+
+    provisioner "remote-exec" {
+        inline = [
+            "sudo apt-get update",
+            "sudo apt-get upgrade -y",
+            "sudo apt-get update",
+            "sudo apt-get -y install apache2"
+        ]
+    }
 }
