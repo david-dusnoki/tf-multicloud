@@ -19,12 +19,16 @@ resource "digitalocean_droplet" "do-test-droplet" {
         timeout = "2m"
     }
 
+    provisioner "file" {
+        source      = "init.sh"
+        destination = "/tmp/init.sh"
+    }
+
     provisioner "remote-exec" {
         inline = [
-            "sudo apt-get update",
-            "sudo apt-get upgrade -y",
-            "sudo apt-get update",
-            "sudo apt-get -y install apache2"
+            "chmod +x /tmp/init.sh",
+            "/tmp/init.sh",
+            "exit 0"
         ]
     }
 }
