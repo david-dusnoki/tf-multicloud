@@ -8,3 +8,5 @@ sudo useradd -m -s /bin/bash maintain
 echo "Setting up sudo access"
 sudo usermod -aG sudo maintain
 echo 'maintain  ALL=(ALL:ALL) ALL' | sudo tee -a /etc/sudoers
+
+exit 0
