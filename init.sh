@@ -5,7 +5,7 @@ sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=YES apt upgrade -yq
 echo "Installing Python"
 sudo apt-get update
-sudp apt-get install python -y
+sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=YES apt-get install python -yq
 echo "Setting up Ansiblee user"
 sudo useradd -m -s /bin/bash maintain
 echo "Setting up sudo access for maintain"
