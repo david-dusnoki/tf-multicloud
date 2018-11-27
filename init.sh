@@ -3,9 +3,11 @@
 echo "Running apt update & upgrade"
 sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=YES apt upgrade -yq
-echo "Installing Python"
+echo "Installing Python and Pip"
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=YES apt-get install python -yq
+sudo DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=YES apt-get install python python-pip -yq
+echo "Install webapp2 paste and webob"
+sudo pip install webapp2 Paste WebOb
 echo "Setting up Ansiblee user"
 sudo useradd -m -s /bin/bash maintain
 echo "Setting up sudo access for maintain"
