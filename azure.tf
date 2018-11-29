@@ -28,7 +28,7 @@ resource "azurerm_subnet" "test-subnet" {
     address_prefix       = "10.0.1.0/24"
 }
 
-# Create public IPs
+# Create public IP
 resource "azurerm_public_ip" "test-publicip" {
     name                         = "test-publicip"
     location                     = "eastus"
@@ -38,6 +38,12 @@ resource "azurerm_public_ip" "test-publicip" {
     tags {
         environment = "Terraform Demo"
     }
+}
+
+# Store Public IP
+data "azurerm_public_ip" "test-publicip" {
+    name                = "${azurerm_public_ip.test-publicip.name}"
+    resource_group_name = "${azurerm_virtual_machine.test-vm.resource_group_name}"
 }
 
 # Create Network Security Group and rule
