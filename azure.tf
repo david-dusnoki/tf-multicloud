@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "test-group" {
 
 # Create virtual network
 resource "azurerm_virtual_network" "test-network" {
-    name                = "test-vnet"
+    name                = "${var.name}-vnet"
     address_space       = ["10.0.0.0/16"]
     location            = "eastus"
     resource_group_name = "${azurerm_resource_group.test-group.name}"
@@ -22,7 +22,7 @@ resource "azurerm_virtual_network" "test-network" {
 
 # Create subnet
 resource "azurerm_subnet" "test-subnet" {
-    name                 = "test-subnet"
+    name                 = "${var.name}-subnet"
     resource_group_name  = "${azurerm_resource_group.test-group.name}"
     virtual_network_name = "${azurerm_virtual_network.test-network.name}"
     address_prefix       = "10.0.1.0/24"
@@ -30,7 +30,7 @@ resource "azurerm_subnet" "test-subnet" {
 
 # Create public IP
 resource "azurerm_public_ip" "test-publicip" {
-    name                         = "test-publicip"
+    name                         = "${var.name}-publicip"
     location                     = "eastus"
     resource_group_name          = "${azurerm_resource_group.test-group.name}"
     public_ip_address_allocation = "dynamic"
@@ -48,7 +48,7 @@ data "azurerm_public_ip" "test-publicip" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "test-sg" {
-    name                = "test-securitygroup"
+    name                = "${var.name}-securitygroup"
     location            = "eastus"
     resource_group_name = "${azurerm_resource_group.test-group.name}"
 
@@ -83,13 +83,13 @@ resource "azurerm_network_security_group" "test-sg" {
 
 # Create network interface
 resource "azurerm_network_interface" "test-nic" {
-    name                      = "test-nic"
+    name                      = "${var.name}-nic"
     location                  = "eastus"
     resource_group_name       = "${azurerm_resource_group.test-group.name}"
     network_security_group_id = "${azurerm_network_security_group.test-sg.id}"
 
     ip_configuration {
-        name                          = "test-nic"
+        name                          = "${var.name}-nic"
         subnet_id                     = "${azurerm_subnet.test-subnet.id}"
         private_ip_address_allocation = "dynamic"
         public_ip_address_id          = "${azurerm_public_ip.test-publicip.id}"
@@ -125,14 +125,14 @@ resource "azurerm_storage_account" "test-storageaccount" {
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "test-vm" {
-    name                  = "test-vm"
+    name                  = "${var.name}-vm"
     location              = "eastus"
     resource_group_name   = "${azurerm_resource_group.test-group.name}"
     network_interface_ids = ["${azurerm_network_interface.test-nic.id}"]
     vm_size               = "Standard_DS1_v2"
 
     storage_os_disk {
-        name              = "test-disk"
+        name              = "${var.name}-disk"
         caching           = "ReadWrite"
         create_option     = "FromImage"
         managed_disk_type = "Premium_LRS"
@@ -146,7 +146,7 @@ resource "azurerm_virtual_machine" "test-vm" {
     }
 
     os_profile {
-        computer_name  = "test-vm"
+        computer_name  = "${var.name}-vm"
         admin_username = "${var.azure_username}"
     }
 
@@ -169,7 +169,7 @@ resource "azurerm_virtual_machine" "test-vm" {
 }
 
 resource "azurerm_virtual_machine_extension" "test-machine-extension" {
-    name                 = "test-vm"
+    name                 = "${var.name}-vm"
     location             = "${azurerm_resource_group.test-group.location}"
     resource_group_name  = "${azurerm_resource_group.test-group.name}"
     virtual_machine_name = "${azurerm_virtual_machine.test-vm.name}"
