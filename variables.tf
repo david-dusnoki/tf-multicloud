@@ -1,3 +1,6 @@
+# Shared
+variable name {}
+
 # Azure
 variable azure_subscription_id {}
 variable azure_client_id {}
