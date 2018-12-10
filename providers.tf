@@ -11,3 +11,9 @@ provider "digitalocean" {
     token = "${var.do_token}"
 }
 
+# Configure Google Cloud Platform
+#provider "google" {
+#    credentials = "${file("google-credentials.json")}"
+#    project     = "durable-timing-100905"
+#    region      = "us-west1"
+#}
