@@ -13,3 +13,7 @@ variable azure_username {}
 variable do_token {}
 variable do_ssh_key {}
 variable do_private_key {}
+
+# AWS
+variable aws_access_key {}
+variable aws_secret_key {}
