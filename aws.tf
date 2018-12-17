@@ -1,27 +1,9 @@
-data "aws_ami" "ubuntu" {
-    most_recent = true
+#############################################
+##					   ##
+##             AWS Network                 ##
+##					   ##
+#############################################
 
-    filter {
-        name   = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*"]
-    }
-
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
-
-    owners = ["099720109477"] # Canonical
-}
-
-resource "aws_instance" "web" {
-    ami           = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
-
-    tags = {
-        Name = "Test"
-    }
-}
 
 resource "aws_vpc" "vpc" {
     cidr_block = "10.0.0.0/16"
@@ -85,3 +67,87 @@ resource "aws_route" "pub_route" {
     destination_cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.igw.id}"
 }
+
+#############################################
+##                                         ##
+##             Security Group		   ##
+##                                         ##
+#############################################
+
+resource "aws_security_group" "aws-sg" {
+    name        = "${var.name}-sg"
+    description = "Enable SSH and HTTP access"
+    vpc_id      = "${aws_vpc.vpc.id}"
+
+    ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        from_port       = 0
+        to_port         = 0
+        protocol        = "-1"
+        cidr_blocks     = ["0.0.0.0/0"]
+    }
+}
+
+#############################################
+##                                         ##
+##             EC2 instance                ##
+##                                         ##
+#############################################
+
+data "template_file" "init" {
+    template = "${file("${path.module}/init.sh")}"
+}
+
+data "aws_ami" "ubuntu" {
+    most_recent = true
+
+    filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-*-16.04-amd64-server-*"]
+    }
+
+    filter {
+        name   = "virtualization-type"
+        values = ["hvm"]
+    }
+
+    owners = ["099720109477"] # Canonical
+}
+
+resource "aws_key_pair" "ssh-key" {
+    key_name   = "${var.name}-ssh-key"
+    public_key = "${var.aws_ssh_key}"
+}
+
+resource "aws_instance" "ec2-test" {
+    ami           = "${data.aws_ami.ubuntu.id}"
+    key_name      = "${aws_key_pair.ssh-key.id}"
+    instance_type = "t2.micro"
+
+#    private_ip = "${var.private_ip[0]}"
+    subnet_id  = "${aws_subnet.sub_pub.id}"
+    vpc_security_group_ids = ["${aws_security_group.aws-sg.id}"]
+#    root_block_device {
+#        volume_size = 10
+#    }
+
+    user_data = "${data.template_file.init.rendered}"
+
+    tags {
+        Name = "${var.name}-ec2"
+    }
+}
+
