@@ -24,3 +24,9 @@ provider "aws" {
     secret_key = "${var.aws_secret_key}"
     region = "us-west-1"
 }
+
+provider "alicloud" {
+    access_key = "${var.ac_access_key}"
+    secret_key = "${var.ac_secret_key}"
+    region     = "us-east-1"
+}
