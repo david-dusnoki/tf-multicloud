@@ -16,3 +16,9 @@ output "azure_username" {
 output "do_public_ip" {
     value = "${digitalocean_droplet.do-test-droplet.ipv4_address}"
 }
+
+# AWS
+
+output "aws_public_ip" {
+    value = "${aws_instance.ec2-test.public_ip}"
+}
