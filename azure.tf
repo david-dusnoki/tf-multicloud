@@ -38,12 +38,20 @@ resource "azurerm_public_ip" "test-publicip" {
     tags {
         environment = "Terraform Demo"
     }
+
+    depends_on = [
+        "azurerm_resource_group.test-group",
+    ]
 }
 
 # Store Public IP
 data "azurerm_public_ip" "test-publicip" {
     name                = "${azurerm_public_ip.test-publicip.name}"
     resource_group_name = "${azurerm_virtual_machine.test-vm.resource_group_name}"
+
+    depends_on = [
+        "azurerm_public_ip.test-publicip",
+    ]
 }
 
 # Create Network Security Group and rule
