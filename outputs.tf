@@ -22,3 +22,9 @@ output "do_public_ip" {
 output "aws_public_ip" {
     value = "${aws_instance.ec2-test.public_ip}"
 }
+
+# Alicloud
+
+output "ac_public_ip" {
+    value = "${alicloud_eip.eip.ip_address}"
+}
